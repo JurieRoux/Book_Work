@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Hangman Game</title>
+</head>
+<body>
+    <h1>Hangman Game</h1>
+    <p>Guess the word:</p>
+    <div id="word-display"></div>
+    <p>Guess a letter:</p>
+    <input type="text" id="letter-input">
+    <button id="guess-button">Guess</button>
+    <p>Incorrect Guesses:</p>
+    <div id="incorrect-guesses"></div>
+    <p>Attempts Left:</p>
+    <div id="attempts-left"></div>
+
+    <script>
+        // List of words for the game
+        const wordList = ["developer",];
+
+        // Select a random word from the list
+        const randomIndex = Math.floor(Math.random() * wordList.length);
+        const selectedWord = wordList[randomIndex];
+
+        // Initialize variables
+        const wordDisplay = document.getElementById("word-display");
+        const letterInput = document.getElementById("letter-input");
+        const guessButton = document.getElementById("guess-button");
+        const incorrectGuesses = document.getElementById("incorrect-guesses");
+        const attemptsLeft = document.getElementById("attempts-left");
+
+        let attempts = 6; // Number of attempts allowed
+        let guessedWord = Array(selectedWord.length).fill("_");
+        let wrongGuesses = [];
+
+        // Function to update the word display
+        function updateWordDisplay() {
+            wordDisplay.textContent = guessedWord.join(" ");
+        }
+
+        // Function to check if the game is won
+        function isGameWon() {
+            return guessedWord.join("") === selectedWord;
+        }
+
+        // Function to handle a guess
+        function handleGuess() {
+            const guess = letterInput.value.toLowerCase();
+
+            if (guess.length !== 1 || !/[a-z]/.test(guess)) {
+                alert("Please enter a valid single letter.");
+                return;
+            }
+
+            if (selectedWord.includes(guess)) {
+                for (let i = 0; i < selectedWord.length; i++) {
+                    if (selectedWord[i] === guess) {
+                        guessedWord[i] = guess;
+                    }
+                }
+            } else {
+                wrongGuesses.push(guess);
+                attempts--;
+
+                if (attempts === 0) {
+                    alert("Game over. You're out of attempts. The word was: " + selectedWord);
+                    location.reload();
+                }
+            }
+
+            updateWordDisplay();
+            letterInput.value = "";
+
+            if (isGameWon()) {
+                alert("Congratulations! You guessed the word: " + selectedWord);
+                location.reload();
+            }
+
+            incorrectGuesses.textContent = wrongGuesses.join(" ");
+            attemptsLeft.textContent = attempts.toString();
+        }
+
+        // Event listener for the guess button
+        guessButton.addEventListener("click", handleGuess);
+
+        // Initial setup
+        updateWordDisplay();
+        attemptsLeft.textContent = attempts.toString();
+    </script>
+</body>
+</html>
